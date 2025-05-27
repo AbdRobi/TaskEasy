@@ -33,34 +33,7 @@
 - Penanganan error yang lebih baik untuk validasi prioritas
 - Pemisahan tanggung jawab yang lebih baik
 
-## 🧪 Pengujian
 
-### Cakupan Test
-- **US2 Pengurutan Prioritas**: 15 test case baru
-- **Edge Cases**: List kosong, tugas tunggal, dataset besar
-- **Performa**: Menangani 100+ tugas secara efisien (<100ms)
-- **Integritas Data**: Urutan tugas asli tetap terjaga
-
-### Test Results
-\`\`\`bash
-✅ US2 Priority Sorting Tests: 15/15 passed
-✅ US1 Create Task Tests: 12/12 passed  
-✅ Integration Tests: 8/8 passed
-✅ Performance Tests: 3/3 passed
-\`\`\`
-
-## 📊 Metrik
-
-### Kualitas Kode
-- **Test Coverage**: 92% (naik dari 85%)
-- **Functions**: 18 total (+6 baru)
-- **Lines of Code**: ~450 (+120)
-- **Complexity**: Rendah (terjaga)
-
-### Performa
-- **Kecepatan Sorting**: <5ms untuk 50 tugas
-- **Penggunaan Memory**: Stabil (tidak ada kebocoran)
-- **Responsivitas UI**: Animasi yang smooth
 
 ## 🎯 Pengalaman Pengguna
 
