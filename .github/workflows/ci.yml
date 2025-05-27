@@ -1,0 +1,141 @@
+name: TaskEasy CI - Day 4
+
+on:
+  push:
+    branches: [ main, day-4-us3-update-tasks ]
+  pull_request:
+    branches: [ main ]
+
+jobs:
+  test-us3:
+    runs-on: ubuntu-latest
+    
+    steps:
+    - name: Checkout code
+      uses: actions/checkout@v3
+      
+    - name: Setup Node.js
+      uses: actions/setup-node@v3
+      with:
+        node-version: '18'
+        cache: 'npm'
+        
+    - name: Install dependencies
+      run: npm ci
+        
+    - name: Run US3 Update Tasks Tests
+      run: |
+        echo "🧪 Running Day 4 - US3 Update Tasks Tests"
+        npm test -- --testNamePattern="US3|Update"
+        
+    - name: Run All Tests (US1 + US2 + US3)
+      run: npm test
+      
+    - name: Test Coverage
+      run: npm run test:coverage
+        
+    - name: Validate Update Functionality
+      run: |
+        echo "Validating US3 update functionality..."
+        
+        node -e "
+          const { JSDOM } = require('jsdom');
+          const dom = new JSDOM('<!DOCTYPE html><html><body></body></html>');
+          global.document = dom.window.document;
+          global.window = dom.window;
+          global.localStorage = {
+            data: {},
+            getItem: function(key) { return this.data[key] || null; },
+            setItem: function(key, value) { this.data[key] = value; },
+            clear: function() { this.data = {}; }
+          };
+          
+          const { TaskManager } = require('./src/TaskManager.js');
+          const tm = new TaskManager();
+          
+          // Create a task
+          const task = tm.createTask({
+            title: 'Original Task',
+            description: 'Original Description',
+            priority: 'low',
+            status: 'to-do'
+          });
+          
+          // Update the task
+          const updated = tm.updateTask(task.id, {
+            title: 'Updated Task',
+            priority: 'high',
+            status: 'in-progress'
+          });
+          
+          if (updated.title !== 'Updated Task') {
+            console.log('❌ Task title update failed');
+            process.exit(1);
+          }
+          
+          if (updated.priority !== 'high') {
+            console.log('❌ Task priority update failed');
+            process.exit(1);
+          }
+          
+          if (updated.status !== 'in-progress') {
+            console.log('❌ Task status update failed');
+            process.exit(1);
+          }
+          
+          if (updated.description !== 'Original Description') {
+            console.log('❌ Task description should remain unchanged');
+            process.exit(1);
+          }
+          
+          console.log('✅ US3 Update functionality validation passed');
+          console.log('Updated task:', updated.title, updated.priority, updated.status);
+        "
+        
+    - name: Validate Edit Mode
+      run: |
+        echo "Validating edit mode functionality..."
+        
+        node -e "
+          const { JSDOM } = require('jsdom');
+          const dom = new JSDOM('<!DOCTYPE html><html><body></body></html>');
+          global.document = dom.window.document;
+          global.window = dom.window;
+          global.localStorage = {
+            data: {},
+            getItem: function(key) { return this.data[key] || null; },
+            setItem: function(key, value) { this.data[key] = value; },
+            clear: function() { this.data = {}; }
+          };
+          
+          const { TaskManager } = require('./src/TaskManager.js');
+          const tm = new TaskManager();
+          
+          const task = tm.createTask({
+            title: 'Test Task',
+            priority: 'medium',
+            status: 'to-do'
+          });
+          
+          // Test edit mode
+          tm.enterEditMode(task.id);
+          
+          if (!tm.isInEditMode()) {
+            console.log('❌ Edit mode not activated');
+            process.exit(1);
+          }
+          
+          if (tm.getEditingTaskId() !== task.id) {
+            console.log('❌ Wrong task ID in edit mode');
+            process.exit(1);
+          }
+          
+          tm.exitEditMode();
+          
+          if (tm.isInEditMode()) {
+            console.log('❌ Edit mode not deactivated');
+            process.exit(1);
+          }
+          
+          console.log('✅ Edit mode validation passed');
+        "
