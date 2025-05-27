@@ -75,7 +75,10 @@
     },
     "testMatch": [
       "<rootDir>/src/__tests__/**/*.test.js"
-    ]
+    ],
+    "moduleNameMapper": {
+      "^@/(.*)$": "<rootDir>/src/$1"
+    }
   },
   "engines": {
     "node": ">=16.0.0",
@@ -116,5 +119,6 @@
     "Customer Collaboration and Feedback"
   ]
 }
+
 
 
