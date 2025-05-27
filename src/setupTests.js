@@ -1,5 +1,5 @@
 // Jest setup file for TaskEasy - Day 2
-require( "@testing-library/jest-dom");
+import '@testing-library/jest-dom';
 
 // Mock localStorage
 const localStorageMock = {
