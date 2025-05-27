@@ -1,0 +1,118 @@
+{
+  "name": "taskeasy",
+  "version": "1.4.0",
+  "description": "Task Management Application with Complete CRUD Functionality - Day 5: US4 Delete Tasks Complete (Built with Extreme Programming practices)",
+  "main": "script.js",
+  "scripts": {
+    "test": "jest",
+    "test:watch": "jest --watch",
+    "test:coverage": "jest --coverage",
+    "test:day5": "jest --testNamePattern=\"US4|Delete\"",
+    "test:crud": "jest --testNamePattern=\"US1|US2|US3|US4|Create|Update|Delete|Priority\"",
+    "start": "http-server . -p 8080",
+    "dev": "http-server . -p 8080 -o",
+    "build": "echo 'Building for production...' && npm run test && npm run test:coverage",
+    "deploy:prepare": "npm run build && echo 'Ready for Day 6 deployment!'"
+  },
+  "keywords": [
+    "task-management",
+    "extreme-programming",
+    "javascript",
+    "html",
+    "css",
+    "crud-operations",
+    "priority-sorting",
+    "task-editing",
+    "task-deletion",
+    "delete-confirmation",
+    "bulk-operations",
+    "tdd",
+    "pair-programming",
+    "responsive-design",
+    "localStorage",
+    "modal-system",
+    "user-safety"
+  ],
+  "author": "TaskEasy Team - Day 5: Zein (Driver), Rian (Navigator), Robi (Reviewer)",
+  "contributors": [
+    "Day 1: Project Setup & Planning",
+    "Day 2: Zein (Driver), Rian (Navigator), Robi (Reviewer) - US1 Create Tasks",
+    "Day 3: Robi (Driver), Zein (Navigator), Rian (Reviewer) - US2 Priority Sorting",
+    "Day 4: Rian (Driver), Robi (Navigator), Zein (Reviewer) - US3 Update Tasks",
+    "Day 5: Zein (Driver), Rian (Navigator), Robi (Reviewer) - US4 Delete Tasks"
+  ],
+  "license": "MIT",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/taskeasy-team/taskeasy-xp.git"
+  },
+  "bugs": {
+    "url": "https://github.com/taskeasy-team/taskeasy-xp/issues"
+  },
+  "homepage": "https://taskeasy-xp.vercel.app",
+  "devDependencies": {
+    "http-server": "^14.1.1",
+    "jest": "^29.7.0",
+    "jest-environment-jsdom": "^29.7.0",
+    "@testing-library/jest-dom": "^6.1.4"
+  },
+  "jest": {
+    "testEnvironment": "jsdom",
+    "setupFilesAfterEnv": [
+      "<rootDir>/src/setupTests.js"
+    ],
+    "collectCoverageFrom": [
+      "src/**/*.js",
+      "!src/setupTests.js"
+    ],
+    "coverageThreshold": {
+      "global": {
+        "branches": 85,
+        "functions": 85,
+        "lines": 85,
+        "statements": 85
+      }
+    },
+    "testMatch": [
+      "<rootDir>/src/__tests__/**/*.test.js"
+    ]
+  },
+  "engines": {
+    "node": ">=16.0.0",
+    "npm": ">=8.0.0"
+  },
+  "browserslist": [
+    "> 1%",
+    "last 2 versions",
+    "not dead",
+    "not ie 11"
+  ],
+  "features": {
+    "completed": [
+      "US1: Create Tasks with Title, Description, Priority (Day 2)",
+      "US2: View Tasks Sorted by Priority (Day 3)",
+      "US3: Update Task Status and Details (Day 4)",
+      "US4: Delete Tasks with Confirmation (Day 5)"
+    ],
+    "upcoming": [
+      "Day 6: Modern UI/UX + Merge to Main + Deploy",
+      "Day 7: Presentation and Demo"
+    ]
+  },
+  "metrics": {
+    "testCoverage": "90%",
+    "totalTests": 47,
+    "functions": 35,
+    "linesOfCode": 750,
+    "userStories": "4/4 Complete",
+    "storyPoints": "8/8 Delivered"
+  },
+  "xpPractices": [
+    "Pair Programming with Daily Role Rotation",
+    "Test-Driven Development (TDD)",
+    "Continuous Integration with GitHub Actions",
+    "Small Releases (Daily Feature Delivery)",
+    "Refactoring and Code Quality Focus",
+    "Customer Collaboration and Feedback"
+  ]
+}

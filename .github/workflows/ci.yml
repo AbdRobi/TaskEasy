@@ -1,0 +1,206 @@
+name: TaskEasy CI - Day 5
+
+on:
+  push:
+    branches: [ main, day-5-us4-delete-tasks ]
+  pull_request:
+    branches: [ main ]
+
+jobs:
+  test-us4:
+    runs-on: ubuntu-latest
+    
+    steps:
+    - name: Checkout code
+      uses: actions/checkout@v3
+      
+    - name: Setup Node.js
+      uses: actions/setup-node@v3
+      with:
+        node-version: '18'
+        cache: 'npm'
+        
+    - name: Install dependencies
+      run: npm ci
+        
+    - name: Run US4 Delete Tasks Tests
+      run: |
+        echo "🧪 Running Day 5 - US4 Delete Tasks Tests"
+        npm test -- --testNamePattern="US4|Delete"
+        
+    - name: Run All Tests (US1 + US2 + US3 + US4)
+      run: npm test
+      
+    - name: Test Coverage
+      run: npm run test:coverage
+        
+    - name: Validate Delete Functionality
+      run: |
+        echo "Validating US4 delete functionality..."
+        
+        node -e "
+          const { JSDOM } = require('jsdom');
+          const dom = new JSDOM('<!DOCTYPE html><html><body></body></html>');
+          global.document = dom.window.document;
+          global.window = dom.window;
+          global.localStorage = {
+            data: {},
+            getItem: function(key) { return this.data[key] || null; },
+            setItem: function(key, value) { this.data[key] = value; },
+            clear: function() { this.data = {}; }
+          };
+          
+          const { TaskManager } = require('./src/TaskManager.js');
+          const tm = new TaskManager();
+          
+          // Create test tasks
+          const task1 = tm.createTask({
+            title: 'Task to Delete',
+            priority: 'high',
+            status: 'to-do'
+          });
+          
+          const task2 = tm.createTask({
+            title: 'Task to Keep',
+            priority: 'medium',
+            status: 'done'
+          });
+          
+          if (tm.getAllTasks().length !== 2) {
+            console.log('❌ Initial task creation failed');
+            process.exit(1);
+          }
+          
+          // Test single delete
+          const result = tm.deleteTask(task1.id);
+          
+          if (!result) {
+            console.log('❌ Delete operation failed');
+            process.exit(1);
+          }
+          
+          if (tm.getAllTasks().length !== 1) {
+            console.log('❌ Task not deleted properly');
+            process.exit(1);
+          }
+          
+          if (tm.getTaskById(task1.id) !== null) {
+            console.log('❌ Deleted task still exists');
+            process.exit(1);
+          }
+          
+          console.log('✅ US4 Delete functionality validation passed');
+        "
+        
+    - name: Validate Delete Confirmation System
+      run: |
+        echo "Validating delete confirmation system..."
+        
+        node -e "
+          const { JSDOM } = require('jsdom');
+          const dom = new JSDOM('<!DOCTYPE html><html><body></body></html>');
+          global.document = dom.window.document;
+          global.window = dom.window;
+          global.localStorage = {
+            data: {},
+            getItem: function(key) { return this.data[key] || null; },
+            setItem: function(key, value) { this.data[key] = value; },
+            clear: function() { this.data = {}; }
+          };
+          
+          const { TaskManager } = require('./src/TaskManager.js');
+          const tm = new TaskManager();
+          
+          const task = tm.createTask({
+            title: 'Test Task',
+            priority: 'medium',
+            status: 'to-do'
+          });
+          
+          // Test delete confirmation flow
+          tm.requestDelete(task.id);
+          
+          if (!tm.isDeletePending()) {
+            console.log('❌ Delete request not registered');
+            process.exit(1);
+          }
+          
+          if (tm.getPendingDeleteId() !== task.id) {
+            console.log('❌ Wrong task ID in delete request');
+            process.exit(1);
+          }
+          
+          // Test cancel
+          tm.cancelDelete();
+          
+          if (tm.isDeletePending()) {
+            console.log('❌ Delete request not cancelled');
+            process.exit(1);
+          }
+          
+          // Test confirm
+          tm.requestDelete(task.id);
+          const confirmed = tm.confirmDelete();
+          
+          if (!confirmed) {
+            console.log('❌ Delete confirmation failed');
+            process.exit(1);
+          }
+          
+          if (tm.getAllTasks().length !== 0) {
+            console.log('❌ Task not deleted after confirmation');
+            process.exit(1);
+          }
+          
+          console.log('✅ Delete confirmation system validation passed');
+        "
+        
+    - name: Validate Bulk Delete Operations
+      run: |
+        echo "Validating bulk delete operations..."
+        
+        node -e "
+          const { JSDOM } = require('jsdom');
+          const dom = new JSDOM('<!DOCTYPE html><html><body></body></html>');
+          global.document = dom.window.document;
+          global.window = dom.window;
+          global.localStorage = {
+            data: {},
+            getItem: function(key) { return this.data[key] || null; },
+            setItem: function(key, value) { this.data[key] = value; },
+            clear: function() { this.data = {}; }
+          };
+          
+          const { TaskManager } = require('./src/TaskManager.js');
+          const tm = new TaskManager();
+          
+          // Create test tasks
+          tm.createTask({ title: 'Todo Task', priority: 'high', status: 'to-do' });
+          tm.createTask({ title: 'Done Task 1', priority: 'medium', status: 'done' });
+          tm.createTask({ title: 'Done Task 2', priority: 'low', status: 'done' });
+          
+          if (tm.getAllTasks().length !== 3) {
+            console.log('❌ Initial tasks not created');
+            process.exit(1);
+          }
+          
+          // Test delete completed tasks
+          const deletedCount = tm.deleteCompletedTasks();
+          
+          if (deletedCount !== 2) {
+            console.log('❌ Wrong number of completed tasks deleted');
+            process.exit(1);
+          }
+          
+          if (tm.getAllTasks().length !== 1) {
+            console.log('❌ Incorrect remaining tasks after bulk delete');
+            process.exit(1);
+          }
+          
+          if (tm.getAllTasks()[0].status !== 'to-do') {
+            console.log('❌ Wrong task remaining after bulk delete');
+            process.exit(1);
+          }
+          
+          console.log('✅ Bulk delete operations validation passed');
+        "
