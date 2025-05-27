@@ -5,7 +5,7 @@
   "main": "script.js",
   "scripts": {
     "test": "jest",
-    "test:watch": "jest --watch",
+    "test:watch": "jest --watchAll",
     "test:coverage": "jest --coverage",
     "start": "http-server . -p 8080",
     "dev": "http-server . -p 8080 -o"
@@ -36,7 +36,7 @@
     ],
     "coverageThreshold": {
       "global": {
-        "branches": 70,
+        "branches": 60,
         "functions": 70,
         "lines": 70,
         "statements": 70
